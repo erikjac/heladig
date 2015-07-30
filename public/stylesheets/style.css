@@ -1,0 +1,288 @@
+body {
+  font: 16px "Roboto", Helvetica, Arial, sans-serif;
+  background-color: #f4f3ee;
+}
+
+h1 {
+  color: #f57c31;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h3 {
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 16px
+}
+a {
+  color: #00B7FF;
+}
+
+  
+/* HEADER */
+#header {
+  position: relative;
+  top: 0;
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+
+#header-small {
+  display: none;
+}
+
+
+@media (max-width: 991px) {
+  #header {
+    display: none;
+  }
+
+  #header-small {
+    display: block;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background-color: #f57c31;
+  }
+
+  #header-small .navbar-open {
+    width: 20px;
+    height: 20px;
+    padding: 18px;
+	  -webkit-transition: margin-left 0.2s ease-in;
+    -moz-transition: margin-left 0.2s ease-in;
+    -o-transition: margin-left 0.2s ease-in;
+    -ms-transition: margin-left 0.2s ease-in;
+    transition: margin-left 0.2s ease-in;  
+  }
+
+  #header-small .navbar-open.open {
+    margin-left: 240px;
+  }
+}
+
+/* MAIN BLOCK */
+@media (min-width: 1200px) {
+  .main-block {
+    width: 1170px;
+    height: 600px;
+  }
+
+
+  .nav-block {
+    height: 100%;
+    width: 293px;
+    background-color: #f57c31;
+    float: left;
+  }
+
+  .nav-block .top-logo {
+    display: none;
+  }
+
+  .content-block {
+    height: 100%;
+    width: 867px;
+    float: right;
+    margin-left: 10px;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: #eeece3;
+  }
+
+  .content-block.small {
+    height: initial;
+  }
+}
+
+
+@media (max-width: 1199px) {
+  .main-block {
+    width: 970px;
+    height: 600px;
+  }
+
+
+  .nav-block {
+    height: 100%;
+    width: 243px;
+    background-color: #f57c31;
+    float: left;
+  }
+
+  .nav-block .top-logo {
+    display: none;
+  }
+
+  .content-block {
+    height: 100%;
+    width: 717px;
+    float: right;
+    margin-left: 10px;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: #eeece3;
+  }
+
+  .content-block.small {
+    height: initial;
+  }
+}
+
+@media (max-width: 991px) {
+  .main-block {
+    width: 100%;
+    height: 100%;
+  }
+
+  .nav-block {
+    position: absolute;
+    top: 0;
+    left: -240px;
+    width: 240px;
+    height: 100%; 
+    background-color: #f57c31;    
+    z-index: 10;
+	  -webkit-transition: left 0.2s ease-in;
+    -moz-transition: left 0.2s ease-in;
+    -o-transition: left 0.2s ease-in;
+    -ms-transition: left 0.2s ease-in;
+    transition: left 0.2s ease-in;  
+    -webkit-box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  }
+
+  .nav-block.open {
+    left: 0px;
+  }
+
+  .nav-block .top-logo {
+    display: block;
+    width: 100%;
+    height: 48px;
+    background-color: #f4f3ee;
+  }
+  
+  .nav-block .top-logo img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .content-block {
+    height: 100%;
+    width: 100%;
+    margin-top: 20px;
+    background-color: #eeece3;
+  }
+}
+
+.nav-block ul {
+  list-style: none;
+  padding-top: 20px;
+}
+
+.nav-block ul li {
+  padding-bottom: 10px;
+}
+
+.nav-block ul li a{
+  color: #eeece3;
+  font-size: 20px;
+}
+
+.button {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  background-color: #009688;
+  font-size: 20px;
+  color: #F5F5F5;
+  text-align: center;
+}
+
+/* YOGA PAGE CONTENT */
+#yoga-events-container {
+  text-align: center;
+}
+
+
+.eventlist {
+  overflow: auto;
+  white-space: nowrap;
+  padding-left: 0px;
+}
+
+.yoga-event {
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 5px;
+  margin: 10px;
+  margin-left: auto;
+  margin-right: 10px;
+  padding: 20px;
+  background-color: #f4f3ee;
+}
+
+
+.yoga-event-full {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
+
+.yoga-event p{
+  font-size: 16px;
+}
+
+
+.courselist {
+  list-style: none;
+  padding-left: 0px;
+}
+
+.courselist li {
+  border-bottom: solid 1px #ccc ;
+  margin-bottom: 20px;
+}
+
+.courselist li .time {
+  font-size: 20px;
+}
+
+/* FOOTER */
+#footer {
+    position: relative;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    bottom: 0;
+}
+
+#footer span{
+  color: #f57c31; 
+  font-size: 20px;
+  padding: 10px;
+  text-transform: capitalize;
+}
+
+#footer span.email {
+  text-transform: lowercase;
+}
+
+
+/* MISC */
+.icon-bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin-bottom: 3px;
+  background-color: #ffffff;
+  border-radius: 1px;
+}

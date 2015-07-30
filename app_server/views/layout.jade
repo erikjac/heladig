@@ -1,0 +1,61 @@
+
+doctype html
+html(ng-app='heladig')
+  head
+    title= title
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+  
+  #header
+    .container
+      .row
+        .col-md-2
+          img(src='/images/logo.jpg')
+        .col-md-4.col-md-offset-6
+          img(src='/images/banner.jpg')
+  #header-small(ng-controller='headerSmallCtrl')
+    #navbar-open.navbar-open(ng-click="toggleOpen()")
+      span.icon-bar
+      span.icon-bar
+      span.icon-bar
+    
+  .container    
+    .main-block
+      #nav-block.nav-block
+        #top-logo.top-logo
+          img#top-logo-img(src='/images/logo.jpg')
+        ul
+          li
+            a(href='/') Hem
+          li
+            a(href='/yoga/') Yoga
+          li
+            a(href='/massage/') Massage
+          li
+            a(href='/contact/') Kontakt
+          li
+            a(href='/about/') Om Mig 
+
+      block content
+
+  #footer
+    .container
+      .row
+        .col-md-2
+          span agneta persevall  
+        .col-md-2.col-md-offset-1
+          span ålstensgatan 1 
+          br
+          span 167 65 bromma 
+        .col-md-2.col-md-offset-1
+          span 0708 46 65 06
+        .col-md-2.col-md-offset-1
+          span.email agneta@heladigyoga.se
+
+  script(src='/javascripts/jquery-1.11.3.min.js')
+  script(src='/bootstrap/js/bootstrap.min.js')
+  script(src='/angular/angular.min.js')
+  script(src='/javascripts/ux.js')
+  script(src='/angular/heladig.js')

@@ -1,0 +1,77 @@
+extends layout
+
+block content
+  .content-block
+    .page-title
+      h1= title
+    p 
+      strong Styrka och Smidighet. 
+    p Yoga ger dig styrka, smidighet, balans och koordination. Under lektionen läggs fokus på det fysiska utövandet (asana). Gradvis läggs utmaningen i kombination med andetaget. Genom rörelse med andetaget förbättras fokus och koncentration. 
+    p
+      strong Fortsättare mer fokus på Medveten Närvaro 
+    p Vi praktiserar rörelse i kombination med medveten andning och med olika tekniker, för att öka medveten närvaro. Vi utvecklar andningsövningar (pranayama) och jobbar vidare med andnings tekniker, för att kunna gå vidare till koncentration och meditations övningar (dhyanam). 
+    p 
+      strong Yoga  presenterad utifrån den filosofiska texten ”Patanjali`s Yoga Sutra. 
+
+  .content-block.small
+    h3 Kommande yoga klasser 
+    p Här kan du i mån av plats resavera en plats på kommande yoga klasser hela schemat finns längre ner på sidan
+    #yoga-events-container
+      ul.eventlist(ng-controller='eventListCtrl')
+        li.yoga-event(data-id="{{event._id}}" ng-repeat='event in data.events' on-finish-render="ngRepeatFinished")
+          p.date Datum: {{event.date}}
+          p.time Tid: {{event.startTime}} - {{event.endTime}}
+          p.instructor Instruktör: {{event.instructor}}
+          p.seats Lediga platser: {{event.seatsLeft}}
+          button.yoga-event-register.button.btn.btn-block(ng-click='showform = true' ng-hide="{{event.seatsLeft}} == 0 || showform") Anmäl Dig
+          button.yoga-event-full.button.btn.btn-block(ng-show="{{event.seatsLeft}}  == 0") Klass är full
+          form(ng-show="showform" ng-submit="registerEvent(user, event)")
+            div.form-group
+              label Förnamn
+              input.form-control(type="text" ng-model="user.firstname" required)
+            div.form-group
+              label Efternamn 
+              input.form-control(type="text" ng-model="user.lastname" required)
+            div.form-group
+              label Email 
+              input.form-control(type="email" ng-model="user.email" required)
+            button.button.btn.btn-block(type="submit") Anmäl Dig 
+          .register-confirm(ng-show="submited")
+            p Du är anmäld  
+
+  .content-block.small
+    h3 Termins schema
+    #yoga-courses-container
+      ul.courselist(ng-controller='courseListCtrl')
+        li.yoga-course(data-id="{{course._id}}" ng-repeat='course in data.courses')
+          p.time {{course.weekday}} mellan {{course.timeStart}} och {{course.timeEnd}}
+          p Instruktör: {{course.instructor}}
+          p Kursen börjar {{course.startDate}} 
+          p {{course.description}}
+           
+     
+         
+
+  .content-block.small
+    h3 Kursanmälan 
+    p Du anmäler dig till terminens kurser genom att fylla i följande formulär 
+    div(ng-controller="courseListCtrl")
+      form(ng-submit="registerCourse(user)")
+        div.from-group
+          label Kurs
+          select.form-control(ng-model="user.courseid")
+            option(ng-repeat="course in data.courses" value='{{course._id}}') {{course.weekday}} mellan {{course.timeStart}} och {{course.timeEnd}}
+        div.form-group
+          label Förnamn
+          input.form-control(type="text" ng-model="user.firstname" required)
+        div.form-group
+          label Efternamn 
+          input.form-control(type="text" ng-model="user.lastname" required)
+        div.form-group
+          label Email 
+          input.form-control(type="email" ng-model="user.email" required)
+        button.button.btn(type="submit") Anmäl Dig
+      .register-confirm(ng-show="submited")
+        h3 Tack du kommer få ett mail med en bekräftelse på din registering
+
+    
