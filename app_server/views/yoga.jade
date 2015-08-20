@@ -18,14 +18,14 @@ block content
     p Här kan du i mån av plats resavera en plats på kommande yoga klasser hela schemat finns längre ner på sidan
     #yoga-events-container
       ul.eventlist(ng-controller='eventListCtrl')
-        li.yoga-event(data-id="{{event._id}}" ng-repeat='event in data.events' on-finish-render="ngRepeatFinished")
+        li.yoga-event(data-id="{{event._id}}" data-url="{{event.eventUrl}}" ng-repeat='event in data.events' on-finish-render="ngRepeatFinished")
           p.date Datum: {{event.date}}
-          p.time Tid: {{event.startTime}} - {{event.endTime}}
+          p.time Tid: {{event.time}}
           p.instructor Instruktör: {{event.instructor}}
           p.seats Lediga platser: {{event.seatsLeft}}
-          button.yoga-event-register.button.btn.btn-block(ng-click='showform = true' ng-hide="{{event.seatsLeft}} == 0 || showform") Anmäl Dig
-          button.yoga-event-full.button.btn.btn-block(ng-show="{{event.seatsLeft}}  == 0") Klass är full
-          form(ng-show="showform" ng-submit="registerEvent(user, event)")
+          button.yoga-event-register.button.btn.btn-block(ng-click='showform = true' ng-hide="{{event.seatsLeft}} <= 0 || showform") Anmäl Dig
+          button.yoga-event-full.button.btn.btn-block(ng-show="{{event.seatsLeft}}  <= 0") Klass är full
+          form.event-form(ng-show="showform" ng-submit="registerEvent(user, event)")
             div.form-group
               label Förnamn
               input.form-control(type="text" ng-model="user.firstname" required)
@@ -36,8 +36,7 @@ block content
               label Email 
               input.form-control(type="email" ng-model="user.email" required)
             button.button.btn.btn-block(type="submit") Anmäl Dig 
-          .register-confirm(ng-show="submited")
-            p Du är anmäld  
+          .register-confirm
 
   .content-block.small
     h3 Termins schema
@@ -72,6 +71,5 @@ block content
           input.form-control(type="email" ng-model="user.email" required)
         button.button.btn(type="submit") Anmäl Dig
       .register-confirm(ng-show="submited")
-        h3 Tack du kommer få ett mail med en bekräftelse på din registering
 
     

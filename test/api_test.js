@@ -29,7 +29,7 @@ describe('API TEST', function() {
         description: "För de som yogat",
         seats: 7
   };
-  var testEventOneid;
+  var testEventOneid; 
   var testEventTwoid;
   var testEventOne = {
         date: new Date("2015-08-14"), 

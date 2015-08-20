@@ -32,14 +32,16 @@ app.service('yogaData', function($http) {
     return date.getDate() + " " + month[date.getMonth()] + " " + date.getFullYear();
   }
   
-  function handleSuccess(res) {
-    return (res.data);
-  };
 
-  function handleError(res) {
-    return (res.data)
-  };
-
+  function hasError(res) {
+    error = undefined;
+    switch(res.status) {
+      case 404:
+        error = {status: 404};
+        break;
+    }
+    return error;
+  }
   function getEvents(startDate, endDate, callback) {
 
     var request = $http({
@@ -49,15 +51,13 @@ app.service('yogaData', function($http) {
           action: 'get'
         }
     }).then(function(res) {
-      var data = res.data;
 
-      for (var i = 0; i < data.length; i++) {
-        data[i].date      = formatEventDate(new Date(data[i].date));
-        data[i].startTime = formatTime(new Date(data[i].startTime));
-        data[i].endTime   = formatTime(new Date(data[i].endTime));
+      if (hasError(res)) {
+        callback({"message": "error"}, res.data);
+      } else  {
+        callback(undefined, data);
       }
 
-      callback(data);
       return;
     });
   };
@@ -100,30 +100,37 @@ app.service('yogaData', function($http) {
         },
         data: user 
       }).then(function(res) {
-        console.log(res);  
+
+        if (hasError(res)) {
+          callback({"message": "error"}, "done");
+        } else  {
+          callback(undefined, "done");
+        }
       });
-    callback("done");
     return;
   };
 
   function addUserToCourse(user, callback) {
 
-    var url = '/api/yoga/course/'+user.courseid+'/user';
+    var url = '/api/yoga/course/'+user.courseid+'/user/'+user.firstname +'/'+user.lastname+'/'+user.email ;
 
     var request = $http({
-        method: 'POST', 
+        method: 'GET', 
         url: url, 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: user
+        params: {
+          action: 'get'
+        }
     }).then(function(res) {
-      console.log(res);
+
+      if (hasError(res)) {
+        callback({"message": "error"}, "done");
+      } else {
+        callback(undefined, "done"); 
+      }
     });
 
     return;
   };
-
   return {
     getEvents:  getEvents,
     getCourses: getCourses,
@@ -155,20 +162,39 @@ app.controller('eventListCtrl', function($scope, yogaData) {
 
   function loadEvents() {
 
-    yogaData.getEvents(new Date(), new Date('2015-12-30'), function(events) {
+    var toDay = new Date();
+    var endDate = new Date();
+
+    // Get events from today and 2 weeks forward
+    endDate.setDate(toDay.getDate() + 14);
+
+    yogaData.getEvents(toDay, endDate, function(err, events) {
+      if (err) {
+        alert(err.message);
+      } else {
         $scope.data = {events: events};
+      }
       });
   };
   
   loadEvents();
   
   $scope.registerEvent = function(user, event) {
-    console.log(user);
-    console.log(event._id);
-    yogaData.addUserToEvent(event._id, user, function(data) {
-      $scope.hideform = false;
+    var success = "Vi har tagit emot din anmälning, du kommer få ett mail som bekräftar den";
+
+    this.showform = false;
+    
+
+    yogaData.addUserToEvent(event._id, user, function(err, data) {
+      
+      if (err) {
+        alert(err.message);
+      } else {
+        alert(success);
+      }
+
     });
-    console.log($scope.showform);
+    
   }
 
 });
@@ -184,11 +210,17 @@ app.controller('courseListCtrl', function($scope, yogaData) {
   };
 
   loadCourses();
-
   $scope.registerCourse = function(user) {
-     
-    yogaData.addUserToCourse(user, function(data) {
-      console.log(data);
+    var success = "Tack du kommer få ett mail med en bekräftelse på din registering"; 
+    
+    yogaData.addUserToCourse(user, function(err, data) {
+
+      if (err) {
+        alert(err.message)
+      } else {
+        alert(success);
+      }
+
     });
 
   };

@@ -4,7 +4,7 @@
  */
 
 exports.index = function(req, res) {
-  res.render('index', { title: 'Senaste nytt' });
+  res.render('index', { title: 'Hela Dig' });
 };
 
 exports.massage = function(req, res) {

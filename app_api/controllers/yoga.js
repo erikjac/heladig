@@ -1,6 +1,8 @@
+var mailgun = require("../mailgun.js");
 var mongoose = require('mongoose');
 var Course = mongoose.model('YogaCourse');
 var Event = mongoose.model('YogaEvent');
+var config = require('../../config');
 
 var sendJSONresponse = function(res, status, content){
     res.status(status);
@@ -52,7 +54,9 @@ var hasUserid = function(req, res) {
  */
 module.exports.courses = function(req, res) {
 
-  Course.find({}, function(err, courses) {
+  Course.find({})
+    .sort({startDate: 1})
+    .exec(function(err, courses) {
     if (err) {
       sendJSONresponse(res, 404, err);
     } else {
@@ -188,45 +192,95 @@ module.exports.updateCourse= function(req, res) {
 };
 
 /*
- * Register a user to a yoga course by adding the user to all the course events 
- * and and update that their is one less open seat 
- * POST /api/yoga/course/:courseid/user
+ * Send a mail to course leader (agenta for now) when a user uses
+ * the form to register to a course 
+ * GET /api/yoga/course/:courseid/user/:name/:lastname/:email
+ * "" +req.params.name + " " + req.params.lastname + " vill anmäla sig till yoga kursen på " + course.weekday + " klockan " + course.timeStart + " - " + course.timeEnd
  */
 module.exports.registerUserToCourse = function(req, res) {
-  console.log("register user");
   if (hasCourseid(req, res)) {
-    Event.find({course: req.params.courseid})
-      .exec(function(err, evts) {
+    Course.findById(req.params.courseid) 
+      .exec(function(err, course) {
+
         if (err) {
           sendJSONresponse(res, 400, err);
-          return;
-        } else if (!evts) {
+        } else if(!course) {
           sendJSONresponse(res, 404, {
             "message": "courseid not found"
           });
-          return
-        }
+        } else {
 
-        for (var i = 0; i < evts.length; i++) {
-          var evt = evts[i];
-          var evt = addUser(evt, req);
-          evt.save(function(err, evt) {
-            var thisUser;
-            
+          var data = {
+            from: "Hela Dig Yoga <mailgun@sandbox74b0843887a948dea84c3bdf7ef3daa1.mailgun.org>",
+            to: "erja7050@gmail.com",
+            subject: "Anmälan till yogaklass",
+            text: "" +req.params.name + " " + req.params.lastname + " vill anmäla sig till yoga kursen på " + course.weekday + " klockan " + course.timeStart + " - " + course.timeEnd
+          };
+
+          mailgun.sendMail(data, function(err, body) {
+
             if (err) {
-              sendJSONresponse(res, 400, err);
-              return;
+              sendJSONresponse(res, 400, {
+                "message": "email error"
+              });
+            } else {
+              sendJSONresponse(res, 200, null);
             }
           });
-
-          --evt.seatsLeft;
         }
-     
-        sendJSONresponse(res, 201, null);
-    });
+      });
   }
 };
 
+/*
+ * Confirm to the user associated with the regcode 
+ * and add her to all yoga events for the course
+ * GET /api/yoga/course/confirmregistration/:regcode
+ */
+module.exports.confirmregistration = function(req, res) {
+
+}
+
+/* Konverterar ett events datumobject till datumsträngar istället
+ * Detta för att hemsidan alltid ska visa samma tid var du än befinner dig
+ * Ett event som skickas till hemsidan måste gå igenom denna funktion
+ */
+var convertEvent = function(evt) {
+  var responseEvent = {};
+  var Days = {
+    1: "Måndag",
+    2: "Tisdag",
+    3: "Onsdag",
+    4: "Torsdag",
+    5: "Fredag",
+    6: "Lördag",
+    7: "Söndag"
+  };
+  var months = {
+    1: "Januari",
+    2: "Februari",
+    3: "Mars",
+    4: "April",
+    5: "Maj",
+    6: "Juni",
+    7: "Juli",
+    8: "Augusti",
+    9: "September",
+    10: "Oktober",
+    11: "November",
+    12: "December"
+  };
+
+  responseEvent.date = Days[evt.date.getDay()] + " den " + evt.date.getDate() + months[evt.date.getMonth()];
+  responseEvent.time = evt.startTime.getHours() + ":" + evt.endTime.getMinutes();
+  responseEvent.instructor = evt.instructor;
+  responseEvent.seatsLeft = evt.seatsLeft;
+  responseEvent.eventUrl = config.url + "/api/yoga/course/event/" + evt._id;
+  responseEvent._id = evt._id;
+
+  return responseEvent;
+  
+};
 /*
  * Get all event for all yoga courses between two dates
  * params datestart datestring on format yyyy-mm-dd
@@ -236,12 +290,13 @@ module.exports.registerUserToCourse = function(req, res) {
  */
 module.exports.eventsByDate = function(req, res) {
   if (req.params && req.params.datestart && req.params.dateend) {
-    //TODO 
-    //Check that date is valid
+
     var start = new Date(req.params.datestart);
     var end   = new Date(req.params.dateend);
+    var response = []
 
     Event.find( {'date': {$gte: start, $lte: end}})
+      .sort({date: 1})
       .exec(function(err, events) {
         
         if (err) {
@@ -249,7 +304,9 @@ module.exports.eventsByDate = function(req, res) {
           return;
         } 
 
-        sendJSONresponse(res, 200, events);
+        response = events.map(convertEvent);
+        
+        sendJSONresponse(res, 200, response);
         
       });
   } else {
@@ -535,6 +592,25 @@ var doAddUser = function(req, res, evt) {
     if (err) {
       sendJSONresponse(res, 400, err);
     } else {
+
+      var data = {
+        from: "Hela Dig Yoga <mailgun@sandbox74b0843887a948dea84c3bdf7ef3daa1.mailgun.org>",
+        to: "erja7050@gmail.com",
+        subject: "Deltagare har anmält sig till en lektion",
+        text: "" +req.params.firstname + " " + req.params.lastname + " har anmält sig till yoga lektionen " + evt.date 
+      };
+
+      mailgun.sendMail(data, function(err, body) {
+
+        if (err) {
+          sendJSONresponse(res, 400, {
+            "message": "email error"
+          });
+        } else {
+          sendJSONresponse(res, 200, null);
+        }
+      });
+
       thisUser = evt.participants[evt.participants.length - 1];
       sendJSONresponse(res, 201, thisUser);
         

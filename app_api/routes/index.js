@@ -2,14 +2,16 @@ var express = require('express');
 var router = express.Router();
 var ctrlYoga= require('../controllers/yoga');
 
-/* Main Pages */
 /* YOGA COURSES */
 router.get('/yoga/course', ctrlYoga.courses);
 router.get('/yoga/course/:courseid', ctrlYoga.getCourse);
 router.post('/yoga/course', ctrlYoga.createCourse);
 router.delete('/yoga/course/:courseid', ctrlYoga.deleteCourse);
 router.put('/yoga/course/:courseid', ctrlYoga.updateCourse);
-router.post('/yoga/course/:courseid/user', ctrlYoga.registerUserToCourse);
+
+/* YOGA COURSES USER REGISTRATOON */
+router.get('/yoga/course/:courseid/user/:name/:lastname/:email', ctrlYoga.registerUserToCourse);
+router.get('yoga/course/confirmregistration/:regcode', ctrlYoga.confirmregistration);
 
 /* YOGA COURSES EVENTS */ 
 router.post('/yoga/course/:courseid/event', ctrlYoga.addEvent);
